@@ -1,8 +1,12 @@
 // V2D
-// This version includes a strange implementation of norm and normEq
-// As well as length and angle
+// A 2d vector class for javascript
+
+// NOTE:
+// This version of V2D includes a strange implementation of norm and normEq
+// Zero vectors will choose a random normalized form
 
 (function(){
+  "use strict";
   
   var V2D = function V2D(x,y) {
     this.x = x;
@@ -11,7 +15,7 @@
   
   V2D.ofPolar = function(rads, length) {
     return new V2D(length * Math.cos(rads), length * Math.sin(rads));
-  }
+  };
   
   V2D.prototype.clone = function() {
     return new V2D(this.x, this.y);
@@ -38,6 +42,12 @@
   V2D.prototype.mulEq = function(s) {
     this.x *= s;
     this.y *= s;
+    return this;
+  };
+
+  V2D.prototype.divEq = function(s) {
+    this.x /= s;
+    this.y /= s;
     return this;
   };
   
@@ -69,8 +79,8 @@
     ));
   };
   
-  // Note: In attempt to patch up the degenerate case,
-  //       the norm of the zero vector will return a random norm
+  // Note: In attempt to patch up the degenerate case, the normalizatio of the
+  //       zero vector will return a random unit vector
   V2D.prototype.normEq = function() {
     var len = this.length();
     if (len !== 0) {
@@ -85,41 +95,29 @@
   };
 
   V2D.prototype.norm = function() {
-    v = new V2D(this.x, this.y);
-    return v.normEq();
+    return (new V2D(this.x, this.y)).normEq();
   };
   
   V2D.prototype.length = function() {
-    return Math.sqrt(this.x*this.x + this.y*this.y);
+    return Math.sqrt(this.x * this.x + this.y * this.y);
   };
   
   V2D.prototype.angle = function() {
     return Math.atan2(this.y, this.x);
   }
   
-  V2D.prototype.print = function() {
-    console.log(
-      'x: ' + (Math.round(this.x*10)/10) +' '+
-      'y: ' + (Math.round(this.y*10)/10)
-    );
-    return this;
-  };
-  
-  V2D.prototype.printf = function() {
-    console.log(
-      'new V2D(' + this.x + ', ' + this.y + ')'
-    );
-    return this;
-  };
+  V2D.prototype.to_s = function() {
+    return 'V2D(' + this.x + ', ' + this.y + ')'
+  }
   
   
   // Export //
-  lastV2D = this.V2D;
+  var lastV2D = this.V2D;
   this.V2D = V2D;
   
   V2D.noConflict = function() {
     this.V2D = lastV2D;
-    return V2D;;
+    return V2D;
   }
   
 }).call(this);
